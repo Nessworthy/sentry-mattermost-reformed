@@ -22,18 +22,18 @@ from setuptools import setup
 from sentry_mattermost import VERSION
 
 setup(
-    name="sentry_mattermost",
+    name="sentry_mattermost_reformed",
     version=VERSION,
-    author="Andre Freitas",
-    author_email="andre.freitas@ndrive.com",
+    author="Mohammad Hadi Azaddel",
+    author_email="m.h.azaddel@gmail.com",
     description=("A Sentry plugin to send Mattermost notifications."),
     license="MIT",
     keywords="sentry mattermost devops",
-    url="https://github.com/NDrive/sentry-mattermost",
-    packages=['sentry_mattermost'],
+    url="https://github.com/hadi2f244/sentry-mattermost-reformed",
+    packages=['sentry_mattermost_reformed'],
     entry_points={
        'sentry.plugins': [
-            'mattermost = sentry_mattermost.plugin:Mattermost'
+            'mattermost = sentry_mattermost_reformed.plugin:Mattermost'
         ],
     },
 )

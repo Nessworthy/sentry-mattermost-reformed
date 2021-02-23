@@ -114,8 +114,8 @@ class Mattermost(notify.NotificationPlugin):
     slug = 'mattermost'
     description = 'Enables notifications for Mattermost Open Source Chat'
     version = sentry_mattermost.VERSION
-    author = 'Andre Freitas <andre.freitas@ndrive.com>'
-    author_url = 'https://github.com/NDrive/sentry-mattermost'
+    author = 'Mohammad Hadi Azaddel <https://github.com/hadi2f244/sentry-mattermost-reformed>'
+    author_url = 'https://github.com/hadi2f244/sentry-mattermost-reformed'
     project_conf_form = MattermostOptionsForm
 
     def is_configured(self, project):
