@@ -31,8 +31,6 @@ import sentry_mattermost
 
 
 def get_project_full_name(project):
-    if project.team.name not in project.name:
-        return '%s %s' % (project.team.name, project.name)
     return project.name
 
 
