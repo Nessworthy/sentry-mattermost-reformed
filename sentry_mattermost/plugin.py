@@ -92,7 +92,7 @@ class PayloadFactory:
                 )
         
         if plugin.get_option('include_tags', project):
-            for tag_key, tag_value in self._get_tags(event):
+            for tag_key, tag_value in cls._get_tags(event):
                 key = tag_key.lower()
                 std_key = tagstore.get_standardized_key(key)
                 if included_tags and key not in included_tags and std_key not in included_tags:
@@ -115,7 +115,7 @@ class PayloadFactory:
                     "fallback": "[%s] %s" % (project_name, title),
                     "title": title,
                     "title_link": group.get_absolute_url(params={"referrer": "mattermost"}),
-                    "color": self.color_for_event(event),
+                    "color": cls.color_for_event(event),
                     "fields": fields,
                     "author_name": "[%s] %s" % (project_name, title)
                 }
