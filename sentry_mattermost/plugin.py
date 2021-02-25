@@ -75,6 +75,7 @@ class PayloadFactory:
         fields.append({"title": "Culprit", "value": culprit, "short": False})
         
         if plugin.get_option('include_rules', project):
+            rules = []
             for rule in notification.rules:
                 rule_link = (
                     f"/{group.organization.slug}/{project.slug}/settings/alerts/rules/{rule.id}/"
