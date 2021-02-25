@@ -87,9 +87,7 @@ class PayloadFactory:
 
 
 def request(url, payload):
-    data = "payload=" + json.dumps(payload)
-    
-    data = urllib.parse.urlencode(data).encode('utf-8')
+    data = urllib.parse.urlencode({'payload': json.dumps(payload)}).encode('utf-8')
     
     req = urllib.request.Request(url, data)
     response = urllib.request.urlopen(req)
