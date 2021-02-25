@@ -30,7 +30,7 @@ setup(
     license="MIT",
     keywords="sentry mattermost devops",
     url="https://github.com/Nessworthy/sentry-mattermost-reformed",
-    packages=['sentry_mattermost_reformed'],
+    packages=['sentry_mattermost'],
     entry_points={
        'sentry.plugins': [
             'mattermost = sentry_mattermost_reformed.plugin:Mattermost'
