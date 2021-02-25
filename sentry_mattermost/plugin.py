@@ -20,6 +20,7 @@
 
 import json
 import urllib.request
+import urllib.parse
 import operator
 
 from django import forms
@@ -87,6 +88,9 @@ class PayloadFactory:
 
 def request(url, payload):
     data = "payload=" + json.dumps(payload)
+    
+    data = urllib.parse.urlencode(data).encode('utf-8')
+    
     req = urllib.request.Request(url, data)
     response = urllib.request.urlopen(req)
     return response.read()
