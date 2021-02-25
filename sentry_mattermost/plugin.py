@@ -63,7 +63,7 @@ class PayloadFactory:
         project = group.project
 
         params = {
-            "title": group.message_short.encode('utf-8'),
+            "title": group.title.encode('utf-8'),
             "link": group.get_absolute_url(),
             "culprit": group.culprit.encode('utf-8'),
             "project": get_project_full_name(project).encode('utf-8')
@@ -120,8 +120,9 @@ class Mattermost(notify.NotificationPlugin):
         return all((self.get_option(k, project) for k in ('webhook',)))
 
     def notify(self, notification, raise_exception=False):
+        event = notification.event
         try:
-            project = notification.event.group.project
+            project = event.group.project
             if not self.is_configured(project):
                 return
 
