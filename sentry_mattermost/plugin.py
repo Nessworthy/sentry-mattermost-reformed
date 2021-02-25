@@ -121,11 +121,25 @@ class Mattermost(notify.NotificationPlugin):
     def is_configured(self, project):
         return all((self.get_option(k, project) for k in ('webhook',)))
 
-    def notify(self, notification):
-        project = notification.event.group.project
-        if not self.is_configured(project):
-            return
+    def notify(self, notification, raise_exception=False):
+        try:
+            project = notification.event.group.project
+            if not self.is_configured(project):
+                return
 
-        webhook = self.get_option('webhook', project)
-        payload = PayloadFactory.create(self, notification)
-        return request(webhook, payload)
+            webhook = self.get_option('webhook', project)
+            payload = PayloadFactory.create(self, notification)
+            return request(webhook, payload)
+        except Exception as err:
+            self.logger.info(
+                "notification-plugin.notify-failed",
+                extra={
+                    "error": str(err),
+                    "plugin": self.slug,
+                    "project_id": event.group.project_id,
+                    "organization_id": event.group.project.organization_id,
+                },
+            )
+            if raise_exception:
+                raise err
+            return False
