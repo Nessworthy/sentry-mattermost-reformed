@@ -30,28 +30,31 @@ from sentry.plugins.bases import notify
 
 import sentry_mattermost
 
-
-def get_project_full_name(project):
-    return project.name
-
-
-def get_rules(notification, group, project):
-    rules = []
-    for rule in notification.rules:
-        rules.append(rule.label.encode('utf-8'))
-    return ', '.join('%s' % r for r in rules)
-
-
-def get_tags(event):
-    tag_list = event.get_tags()
-    if not tag_list:
-        return ()
-
-    return ((tagstore.get_tag_key_label(k), tagstore.get_tag_value_label(k, v)) 
-            for k, v in tag_list)
+LEVEL_TO_COLOR = {
+    "debug": "cfd3da",
+    "info": "2788ce",
+    "warning": "f18500",
+    "error": "f43f20",
+    "fatal": "d20f2a",
+}
 
 
 class PayloadFactory:
+    
+    @classmethod
+    def _get_tags(cls, event):
+        tag_list = event.tags
+        if not tag_list:
+            return ()
+
+        return (
+            (tagstore.get_tag_key_label(k), tagstore.get_tag_value_label(k, v)) for k, v in tag_list
+        )
+    
+    @classmethod
+    def color_for_event(cls, event):
+        return "#" + LEVEL_TO_COLOR.get(event.get_tag("level"), "error")
+    
     @classmethod
     def render_text(cls, params):
         template = "__{project}__\n__[{title}]({link})__ \n{culprit}\n"
@@ -64,10 +67,10 @@ class PayloadFactory:
         project = group.project
 
         params = {
-            "title": group.title.encode('utf-8'),
+            "title": group.title.encode,
             "link": group.get_absolute_url(),
-            "culprit": group.culprit.encode('utf-8'),
-            "project": get_project_full_name(project).encode('utf-8')
+            "culprit": group.culprit,
+            "project": get_project_full_name(project)
         }
 
         if plugin.get_option('include_rules', project):
@@ -75,13 +78,61 @@ class PayloadFactory:
 
         if plugin.get_option('include_tags', project):
             params["tags"] = get_tags(event)
+        
+        title = event.title
+        culprit = group.culprit
+        project_name = project.get_full_name()
+        
+        fields = []
+        
+        fields.append({"title": "Culprit", "value": culprit, "short": False})
+        
+        if plugin.get_option('include_rules', project):
+            for rule in notification.rules:
+                rule_link = (
+                    f"/{group.organization.slug}/{project.slug}/settings/alerts/rules/{rule.id}/"
+                )
 
-        text = cls.render_text(params)
+                rule_link = absolute_uri(rule_link)
+                rules.append((rule.label, rule_link))
 
+            if rules:
+                value = ", ".join("[{}]({})".format(*r) for r in rules)
+
+                fields.append(
+                    {"title": "Triggered By", "value": value, "short": False}
+                )
+        
+        if plugin.get_option('include_tags', project):
+            for tag_key, tag_value in self._get_tags(event):
+                key = tag_key.lower()
+                std_key = tagstore.get_standardized_key(key)
+                if included_tags and key not in included_tags and std_key not in included_tags:
+                    continue
+                if excluded_tags and (key in excluded_tags or std_key in excluded_tags):
+                    continue
+                fields.append(
+                    {
+                        "title": tag_key,
+                        "value": tag_value,
+                        "short": True,
+                    }
+                )
+        
         payload = {
             "username": "Sentry",
             "icon_url": "https://myovchev.github.io/sentry-slack/images/logo32.png", #noqa
-            "text": text
+            "attachments": [
+                {
+                    "fallback": "[%s] %s" % (project_name, title),
+                    "title": title,
+                    "title_link": group.get_absolute_url(params={"referrer": "mattermost"}),
+                    "color": self.color_for_event(event),
+                    "fields": fields,
+                    "author_name": "[%s] %s" % (project_name, title)
+                }
+            ],
+            "message": ""
         }
         return payload
 
