@@ -108,12 +108,11 @@ class PayloadFactory:
             "icon_url": "https://myovchev.github.io/sentry-slack/images/logo32.png", #noqa
             "attachments": [
                 {
-                    "fallback": "[%s] %s" % (project_name, title),
-                    "title": title,
+                    "fallback": "%s: %s" % (project_name, title),
+                    "title": "%s: %s" % (project_name, title),
                     "title_link": group.get_absolute_url(params={"referrer": "mattermost"}),
                     "color": cls.color_for_event(event),
-                    "fields": fields,
-                    "author_name": "[%s] %s" % (project_name, title)
+                    "fields": fields
                 }
             ],
             "message": ""
