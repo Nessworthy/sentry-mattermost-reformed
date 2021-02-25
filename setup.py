@@ -29,7 +29,7 @@ setup(
     description=("A Sentry plugin to send Mattermost notifications."),
     license="MIT",
     keywords="sentry mattermost devops",
-    url="https://github.com/hadi2f244/sentry-mattermost-reformed",
+    url="https://github.com/Nessworthy/sentry-mattermost-reformed",
     packages=['sentry_mattermost_reformed'],
     entry_points={
        'sentry.plugins': [
