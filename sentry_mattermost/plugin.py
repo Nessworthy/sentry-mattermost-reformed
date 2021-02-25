@@ -65,19 +65,6 @@ class PayloadFactory:
         event = notification.event
         group = event.group
         project = group.project
-
-        params = {
-            "title": group.title.encode,
-            "link": group.get_absolute_url(),
-            "culprit": group.culprit,
-            "project": get_project_full_name(project)
-        }
-
-        if plugin.get_option('include_rules', project):
-            params["rules"] = get_rules(notification, group, project)
-
-        if plugin.get_option('include_tags', project):
-            params["tags"] = get_tags(event)
         
         title = event.title
         culprit = group.culprit
@@ -163,10 +150,10 @@ class MattermostOptionsForm(notify.NotificationConfigurationForm):
 class Mattermost(notify.NotificationPlugin):
     title = 'Mattermost'
     slug = 'mattermost'
-    description = 'Enables notifications for Mattermost Open Source Chat'
+    description = 'Enables notifications for Mattermost'
     version = sentry_mattermost.VERSION
-    author = 'Mohammad Hadi Azaddel <https://github.com/hadi2f244/sentry-mattermost-reformed>'
-    author_url = 'https://github.com/hadi2f244/sentry-mattermost-reformed'
+    author = 'Sean Nessworthy'
+    author_url = 'https://nessworthy.me'
     project_conf_form = MattermostOptionsForm
 
     def is_configured(self, project):
